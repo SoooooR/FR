@@ -27,7 +27,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script>
-    const supabase = window.supabase.createClient('https://oxhlcfsxvqceadgmcgwh.supabase.co', 'sb_publishable_HxM8EF8WeWd5iD6HMBOH1w_-i6qwzwl');
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     async function register() {
       const username = document.getElementById('reg-username').value;
