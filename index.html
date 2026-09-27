@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>家庭网站</title>
+</head>
+<body>
+  <h1>家庭网站</h1>
+  <p>欢迎，<span id="current-user"></span> | <a href="#" onclick="logout()">退出</a></p>
+
+  <nav>
+    <button onclick="showSection('posts')">📝 发帖</button>
+    <button onclick="showSection('fund')">💰 资金审批</button>
+    <button onclick="showSection('resources')">🔧 资源分享</button>
+  </nav>
+
+  <!-- 发帖区域 -->
+  <div id="posts-section">
+    <h2>发帖</h2>
+    <input type="text" id="post-title" placeholder="标题">
+    <textarea id="post-content" placeholder="内容"></textarea>
+    <button onclick="createPost()">发布</button>
+    <div id="posts-list"></div>
+  </div>
+
+  <!-- 资金审批区域 -->
+  <div id="fund-section" style="display:none">
+    <h2>资金审批</h2>
+    <div id="fund-form">
+      <input type="number" id="fund-amount" placeholder="金额">
+      <textarea id="fund-reason" placeholder="申请理由"></textarea>
+      <button onclick="submitFundRequest()">提交申请</button>
+    </div>
+    <div id="my-requests"></div>
+    <div id="pending-reviews"></div>
+  </div>
+
+  <!-- 资源分享区域 -->
+  <div id="resources-section" style="display:none">
+    <h2>资源/工具分享</h2>
+    <input type="text" id="resource-title" placeholder="资源名称">
+    <input type="url" id="resource-url" placeholder="资源链接">
+    <textarea id="resource-desc" placeholder="描述"></textarea>
+    <button onclick="shareResource()">分享</button>
+    <div id="resources-list"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
