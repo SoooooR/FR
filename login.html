@@ -7,6 +7,7 @@
 <body>
   <h1>家庭网站</h1>
 
+  <!-- 登录表单 -->
   <div id="login-form">
     <h2>登录</h2>
     <input type="email" id="login-email" placeholder="邮箱">
@@ -15,31 +16,39 @@
     <p>没有账号？<a href="javascript:void(0)" onclick="showRegister()">注册</a></p>
   </div>
 
+  <!-- 注册表单 -->
   <div id="register-form" style="display:none">
     <h2>注册</h2>
     <input type="text" id="reg-username" placeholder="用户名">
     <input type="email" id="reg-email" placeholder="邮箱">
     <input type="password" id="reg-password" placeholder="密码">
     <button onclick="register()">注册</button>
-    <p>已有账号？<a href="#" onclick="showLogin()">登录</a></p>
+    <p>已有账号？<a href="javascript:void(0)" onclick="showLogin()">登录</a></p>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
+  <!-- 引入 Supabase 官方 SDK（国内可用 unpkg 镜像） -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  
   <script>
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // 注意：这里我们把客户端实例命名为 myApp，绝对不会和任何东西冲突！
+    // 同时我们去掉了 config.js 的引入，把网址和 Key 直接写在这里，彻底避免路径或缓存问题。
+    const myApp = window.supabase.createClient(
+      'https://oxhlcfsxvqceadgmcgwh.supabase.co', 
+      'sb_publishable_HxM8EF8WeWd5iD6HMBOH1w_-i6qwzwl'
+    );
 
+    // 注册逻辑
     async function register() {
       const username = document.getElementById('reg-username').value;
       const email = document.getElementById('reg-email').value;
       const password = document.getElementById('reg-password').value;
 
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await myApp.auth.signUp({ email, password });
       if (error) { alert('注册失败：' + error.message); return; }
 
       // 注册成功后，在 profiles 表中创建用户资料
       if (data.user) {
-        await supabase.from('profiles').insert({
+        await myApp.from('profiles').insert({
           id: data.user.id,
           username: username
         });
@@ -47,15 +56,19 @@
       alert('注册成功！请检查邮箱验证（如果开启了邮箱确认）。');
     }
 
+    // 登录逻辑
     async function login() {
       const email = document.getElementById('login-email').value;
       const password = document.getElementById('login-password').value;
 
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await myApp.auth.signInWithPassword({ email, password });
       if (error) { alert('登录失败：' + error.message); return; }
+      
+      // 登录成功，跳转到主页
       window.location.href = 'index.html';
     }
 
+    // 切换页面（解决井号问题已修改为 javascript:void(0)）
     function showRegister() {
       document.getElementById('login-form').style.display = 'none';
       document.getElementById('register-form').style.display = 'block';
