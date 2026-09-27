@@ -2,11 +2,11 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>家庭网站</title>
+  <title>家庭网站 - 主页</title>
 </head>
 <body>
   <h1>家庭网站</h1>
-  <p>欢迎，<span id="current-user"></span> | <a href="#" onclick="logout()">退出</a></p>
+  <p>欢迎，<span id="current-user"></span> | <a href="javascript:void(0)" onclick="logout()">退出</a></p>
 
   <nav>
     <button onclick="showSection('posts')">📝 发帖</button>
@@ -29,6 +29,7 @@
     <div id="fund-form">
       <input type="number" id="fund-amount" placeholder="金额">
       <textarea id="fund-reason" placeholder="申请理由"></textarea>
+      <input type="text" id="reviewer-id" placeholder="审核人用户ID">
       <button onclick="submitFundRequest()">提交申请</button>
     </div>
     <div id="my-requests"></div>
@@ -45,7 +46,8 @@
     <div id="resources-list"></div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- 这里只引入 SDK 和 app.js，绝对不要在这里写任何初始化代码！ -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
 </body>
