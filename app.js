@@ -1,11 +1,13 @@
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// app.js
+// 这里命名为 siteApp，绝对不会和登录页的 authApp 冲突
+const siteApp = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // 检查登录状态
 async function checkAuth() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await siteApp.auth.getSession();
   if (!session) { window.location.href = 'login.html'; return; }
 
-  const { data: profile } = await supabase
+  const { data: profile } = await siteApp
     .from('profiles').select('username').eq('id', session.user.id).single();
   document.getElementById('current-user').textContent = profile?.username || '用户';
 }
@@ -24,9 +26,9 @@ function showSection(name) {
 async function createPost() {
   const title = document.getElementById('post-title').value;
   const content = document.getElementById('post-content').value;
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await siteApp.auth.getSession();
 
-  await supabase.from('posts').insert({
+  await siteApp.from('posts').insert({
     author_id: session.user.id, title, content, category: 'general'
   });
   document.getElementById('post-title').value = '';
@@ -35,7 +37,7 @@ async function createPost() {
 }
 
 async function loadPosts() {
-  const { data } = await supabase
+  const { data } = await siteApp
     .from('posts').select('*, profiles(username)')
     .eq('category', 'general').order('created_at', { ascending: false });
   const list = document.getElementById('posts-list');
@@ -49,12 +51,10 @@ async function loadPosts() {
 async function submitFundRequest() {
   const amount = document.getElementById('fund-amount').value;
   const reason = document.getElementById('fund-reason').value;
-  const { data: { session } } = await supabase.auth.getSession();
+  const reviewerId = document.getElementById('reviewer-id').value;
+  const { data: { session } } = await siteApp.auth.getSession();
 
-  // 你需要指定审核人的ID（可以改为下拉选择家庭成员）
-  const reviewerId = prompt('请输入审核人的用户ID：');
-
-  await supabase.from('fund_requests').insert({
+  await siteApp.from('fund_requests').insert({
     applicant_id: session.user.id,
     reviewer_id: reviewerId,
     amount: parseFloat(amount),
@@ -64,16 +64,14 @@ async function submitFundRequest() {
 }
 
 async function loadFundRequests() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await siteApp.auth.getSession();
 
-  // 我提交的申请
-  const { data: myReqs } = await supabase
+  const { data: myReqs } = await siteApp
     .from('fund_requests').select('*')
     .eq('applicant_id', session.user.id)
     .order('created_at', { ascending: false });
 
-  // 需要我审核的申请
-  const { data: pendingReqs } = await supabase
+  const { data: pendingReqs } = await siteApp
     .from('fund_requests').select('*')
     .eq('reviewer_id', session.user.id)
     .eq('status', 'pending');
@@ -92,13 +90,13 @@ async function loadFundRequests() {
 }
 
 async function approveRequest(id) {
-  await supabase.from('fund_requests')
+  await siteApp.from('fund_requests')
     .update({ status: 'approved', reviewed_at: new Date().toISOString() }).eq('id', id);
   loadFundRequests();
 }
 
 async function rejectRequest(id) {
-  await supabase.from('fund_requests')
+  await siteApp.from('fund_requests')
     .update({ status: 'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
   loadFundRequests();
 }
@@ -108,9 +106,9 @@ async function shareResource() {
   const title = document.getElementById('resource-title').value;
   const url = document.getElementById('resource-url').value;
   const desc = document.getElementById('resource-desc').value;
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await siteApp.auth.getSession();
 
-  await supabase.from('posts').insert({
+  await siteApp.from('posts').insert({
     author_id: session.user.id,
     title, content: `${desc}\n链接：${url}`, category: 'resource'
   });
@@ -118,7 +116,7 @@ async function shareResource() {
 }
 
 async function loadResources() {
-  const { data } = await supabase
+  const { data } = await siteApp
     .from('posts').select('*, profiles(username)')
     .eq('category', 'resource').order('created_at', { ascending: false });
   document.getElementById('resources-list').innerHTML =
@@ -130,7 +128,7 @@ async function loadResources() {
 
 // 退出登录
 async function logout() {
-  await supabase.auth.signOut();
+  await siteApp.auth.signOut();
   window.location.href = 'login.html';
 }
 
