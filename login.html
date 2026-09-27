@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>家庭网站 - 登录</title>
+</head>
+<body>
+  <h1>家庭网站</h1>
+
+  <div id="login-form">
+    <h2>登录</h2>
+    <input type="email" id="login-email" placeholder="邮箱">
+    <input type="password" id="login-password" placeholder="密码">
+    <button onclick="login()">登录</button>
+    <p>没有账号？<a href="#" onclick="showRegister()">注册</a></p>
+  </div>
+
+  <div id="register-form" style="display:none">
+    <h2>注册</h2>
+    <input type="text" id="reg-username" placeholder="用户名">
+    <input type="email" id="reg-email" placeholder="邮箱">
+    <input type="password" id="reg-password" placeholder="密码">
+    <button onclick="register()">注册</button>
+    <p>已有账号？<a href="#" onclick="showLogin()">登录</a></p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function register() {
+      const username = document.getElementById('reg-username').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) { alert('注册失败：' + error.message); return; }
+
+      // 注册成功后，在 profiles 表中创建用户资料
+      if (data.user) {
+        await supabase.from('profiles').insert({
+          id: data.user.id,
+          username: username
+        });
+      }
+      alert('注册成功！请检查邮箱验证（如果开启了邮箱确认）。');
+    }
+
+    async function login() {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) { alert('登录失败：' + error.message); return; }
+      window.location.href = 'index.html';
+    }
+
+    function showRegister() {
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('register-form').style.display = 'block';
+    }
+    function showLogin() {
+      document.getElementById('login-form').style.display = 'block';
+      document.getElementById('register-form').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
