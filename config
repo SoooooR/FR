@@ -1,2 +1,0 @@
-const SUPABASE_URL = '你的Project URL';
-const SUPABASE_ANON_KEY = '你的anon public key';
