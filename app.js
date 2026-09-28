@@ -37,14 +37,57 @@ async function createPost() {
 }
 
 async function loadPosts() {
-  const { data } = await siteApp
-    .from('posts').select('*, profiles(username)')
+  // 1. 只查 posts 表
+  const { data: posts, error } = await siteApp
+    .from('posts').select('*')
     .eq('category', 'general').order('created_at', { ascending: false });
-  const list = document.getElementById('posts-list');
-  list.innerHTML = (data || []).map(p =>
-    `<div><h3>${p.title}</h3><p>${p.content}</p>
-     <small>${p.profiles?.username || ''} · ${new Date(p.created_at).toLocaleString()}</small></div>`
-  ).join('');
+
+  if (error) { 
+    document.getElementById('posts-list').innerHTML = '<p style="color:red;">加载失败：' + error.message + '</p>';
+    return; 
+  }
+  if (!posts || posts.length === 0) {
+    document.getElementById('posts-list').innerHTML = '<p style="color:#999; text-align:center;">还没有帖子，快来发第一篇吧！</p>';
+    return;
+  }
+
+  // 2. 查出所有用户的资料，做个映射表
+  const { data: profiles } = await siteApp.from('profiles').select('id, username');
+  const profileMap = {};
+  (profiles || []).forEach(p => profileMap[p.id] = p.username);
+
+  // 3. 渲染帖子
+  document.getElementById('posts-list').innerHTML = posts.map(p => `
+    <div class="post-item">
+      <h3>${p.title}</h3>
+      <div class="post-meta">作者：${profileMap[p.author_id] || '未知用户'} · 发布于 ${new Date(p.created_at).toLocaleString()}</div>
+      <div class="post-content">${p.content}</div>
+    </div>
+  `).join('');
+}
+
+async function loadResources() {
+  const { data: posts, error } = await siteApp
+    .from('posts').select('*')
+    .eq('category', 'resource').order('created_at', { ascending: false });
+
+  const list = document.getElementById('resources-list');
+  if (error || !posts || posts.length === 0) {
+    list.innerHTML = '<p style="color:#999; text-align:center;">还没有资源分享。</p>';
+    return;
+  }
+
+  const { data: profiles } = await siteApp.from('profiles').select('id, username');
+  const profileMap = {};
+  (profiles || []).forEach(p => profileMap[p.id] = p.username);
+
+  list.innerHTML = posts.map(p => `
+    <div class="post-item">
+      <h3>${p.title}</h3>
+      <div class="post-meta">分享者：${profileMap[p.author_id] || '未知用户'}</div>
+      <div class="post-content">${p.content}</div>
+    </div>
+  `).join('');
 }
 
 // ---- 资金审批功能 ----
@@ -115,16 +158,7 @@ async function shareResource() {
   loadResources();
 }
 
-async function loadResources() {
-  const { data } = await siteApp
-    .from('posts').select('*, profiles(username)')
-    .eq('category', 'resource').order('created_at', { ascending: false });
-  document.getElementById('resources-list').innerHTML =
-    (data || []).map(p =>
-      `<div><h3>${p.title}</h3><p>${p.content}</p>
-       <small>${p.profiles?.username || ''}</small></div>`
-    ).join('');
-}
+
 
 // 退出登录
 async function logout() {
