@@ -6,7 +6,9 @@
 </head>
 <body>
   <h1>家庭网站</h1>
-  <p>欢迎，<span id="current-user"></span> | <a href="javascript:void(0)" onclick="logout()">退出</a></p>
+  <!-- 在“退出”前面加一行 -->
+<a href="javascript:void(0)" onclick="changeUsername()" style="color: #3498db; margin-right: 10px;">修改昵称</a>
+<a href="javascript:void(0)" onclick="logout()">退出</a>
 
   <nav>
     <button onclick="showSection('posts')">📝 发帖</button>
