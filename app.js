@@ -61,7 +61,7 @@ async function loadPosts() {
     <div class="post-item">
       <h3>${p.title}</h3>
       <div class="post-meta">作者：${profileMap[p.author_id] || '未知用户'} · 发布于 ${new Date(p.created_at).toLocaleString()}</div>
-      <div class="post-content">${p.content}</div>
+      <div class="post-content">${marked.parse(p.content)}</div>
     </div>
   `).join('');
 }
@@ -85,7 +85,7 @@ async function loadResources() {
     <div class="post-item">
       <h3>${p.title}</h3>
       <div class="post-meta">分享者：${profileMap[p.author_id] || '未知用户'}</div>
-      <div class="post-content">${p.content}</div>
+      <div class="post-content">${marked.parse(p.content)}</div>
     </div>
   `).join('');
 }
