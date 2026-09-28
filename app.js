@@ -158,7 +158,17 @@ async function shareResource() {
   loadResources();
 }
 
-
+async function changeUsername() {
+  const newName = prompt("请输入新的昵称：");
+  if (!newName) return;
+  const { data: { session } } = await siteApp.auth.getSession();
+  
+  const { error } = await siteApp.from('profiles').update({ username: newName }).eq('id', session.user.id);
+  if (error) { alert('修改失败：' + error.message); return; }
+  alert('昵称已修改！');
+  document.getElementById('current-user').textContent = newName;
+  loadPosts(); // 刷新帖子列表
+}
 
 // 退出登录
 async function logout() {
