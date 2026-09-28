@@ -28,9 +28,19 @@
 
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
+   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
   <script>
-    // 这里命名为 authApp，绝对不会和主页冲突
     const authApp = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // 辅助函数：确保 profiles 表里有这个用户
+    async function ensureProfile(userId, username) {
+      const { error } = await authApp.from('profiles').upsert({
+        id: userId,
+        username: username || '用户_' + userId.substring(0, 5)
+      });
+      if (error) console.error('创建资料失败：', error);
+    }
 
     async function register() {
       const username = document.getElementById('reg-username').value;
@@ -41,10 +51,7 @@
       if (error) { alert('注册失败：' + error.message); return; }
 
       if (data.user) {
-        await authApp.from('profiles').insert({
-          id: data.user.id,
-          username: username
-        });
+        await ensureProfile(data.user.id, username);
       }
       alert('注册成功！请直接登录。');
     }
@@ -55,6 +62,12 @@
 
       const { data, error } = await authApp.auth.signInWithPassword({ email, password });
       if (error) { alert('登录失败：' + error.message); return; }
+
+      // 登录成功后，检查资料是否存在，没有就补上
+      if (data.user) {
+        await ensureProfile(data.user.id, null);
+      }
+      
       window.location.href = 'index.html';
     }
 
