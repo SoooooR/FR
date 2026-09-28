@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <title>家庭网站 - 主页</title>
-</head>
+  <header>
+    <h1>🏠 家庭网站</h1>
+    <div class="user-info">
+      <!-- 这句是最关键的，必须有 span id="current-user" -->
+      欢迎，<span id="current-user" style="font-weight: bold; color: #2c3e50;">加载中...</span>
+      <a href="javascript:void(0)" onclick="changeUsername()" style="color: #3498db; margin-left: 15px;">修改昵称</a>
+      <a href="javascript:void(0)" onclick="logout()" style="margin-left: 10px;">退出</a>
+    </div>
+  </header>
 <body>
-  <h1>家庭网站</h1>
-  <!-- 在“退出”前面加一行 -->
-<a href="javascript:void(0)" onclick="changeUsername()" style="color: #3498db; margin-right: 10px;">修改昵称</a>
-<a href="javascript:void(0)" onclick="logout()">退出</a>
+
 
   <nav>
     <button onclick="showSection('posts')">📝 发帖</button>
