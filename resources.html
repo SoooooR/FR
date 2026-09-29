@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>家庭网站 - 资源分享</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">🏠 家庭网站</a>
+    <div class="nav-links">
+      <a href="index.html">首页发帖</a>
+      <a href="fund.html">资金审批</a>
+      <a href="resources.html" class="active">资源分享</a>
+    </div>
+    <div class="user-actions">
+      欢迎，<span id="current-user">加载中...</span>
+      <a href="javascript:void(0)" onclick="logout()">退出</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="form-card">
+      <h2>🔧 分享新资源</h2>
+      <div class="form-group"><label>资源名称</label><input type="text" id="resource-title" placeholder="例如：好用的记账软件"></div>
+      <div class="form-group"><label>资源链接</label><input type="url" id="resource-url" placeholder="https://..."></div>
+      <div class="form-group"><label>简单描述</label><textarea id="resource-desc" placeholder="介绍一下这个资源..."></textarea></div>
+      <button class="btn-submit" onclick="shareResource()">分享</button>
+    </div>
+    <h2 style="margin-bottom:15px; font-size:18px;">📌 已分享资源</h2>
+    <div id="resources-list"></div>
+  </div>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="resources.js"></script>
+</body>
+</html>
