@@ -33,13 +33,22 @@
   <script>
     const authApp = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // 辅助函数：确保 profiles 表里有这个用户
+      // 辅助函数：确保 profiles 表里有这个用户，但绝不覆盖已有的名字！
     async function ensureProfile(userId, username) {
-      const { error } = await authApp.from('profiles').upsert({
-        id: userId,
-        username: username || '用户_' + userId.substring(0, 5)
-      });
-      if (error) console.error('创建资料失败：', error);
+      // 先检查有没有资料
+      const { data, error } = await authApp.from('profiles').select('id').eq('id', userId).single();
+      if (error && error.code !== 'PGRST116') { 
+        console.error('查询资料失败：', error); 
+        return; 
+      }
+      
+      // 如果没有资料才插入，有资料直接跳过（不执行update，就不会覆盖）
+      if (!data) {
+        await authApp.from('profiles').insert({
+          id: userId,
+          username: username || '用户_' + userId.substring(0, 5)
+        });
+      }
     }
 
     async function register() {
