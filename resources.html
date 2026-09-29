@@ -24,15 +24,28 @@
     <div class="form-card">
       <h2>🔧 分享新资源</h2>
       <div class="form-group"><label>资源名称</label><input type="text" id="resource-title" placeholder="例如：好用的记账软件"></div>
-      <div class="form-group"><label>资源链接</label><input type="url" id="resource-url" placeholder="https://..."></div>
+      
+      <!-- 文件上传区 -->
+      <div class="form-group">
+        <label>上传文件 / 安装包（选填，单文件最大 50MB）</label>
+        <div class="file-upload-wrapper" onclick="document.getElementById('resource-file').click()">
+          <input type="file" id="resource-file" onchange="updateFileName()">
+          <div class="file-upload-label">📎 点击选择文件上传</div>
+          <div class="file-name" id="file-name">尚未选择文件</div>
+        </div>
+      </div>
+
+      <div class="form-group"><label>资源链接（选填，如果已在别处托管）</label><input type="url" id="resource-url" placeholder="https://..."></div>
       <div class="form-group"><label>简单描述</label><textarea id="resource-desc" placeholder="介绍一下这个资源..."></textarea></div>
-      <button class="btn-submit" onclick="shareResource()">分享</button>
+      <button class="btn-submit" onclick="shareResource()">分享资源</button>
     </div>
     <h2 style="margin-bottom:15px; font-size:18px;">📌 已分享资源</h2>
     <div id="resources-list"></div>
   </div>
 
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <!-- 必须引入 marked.js，否则列表渲染会中断！ -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="config.js"></script>
   <script src="resources.js"></script>
 </body>
