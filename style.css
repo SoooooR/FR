@@ -109,3 +109,20 @@ body {
 .status-pending { color: #f59e0b; font-weight: bold; }
 .status-approved { color: #10b981; font-weight: bold; }
 .status-rejected { color: #ef4444; font-weight: bold; }
+
+/* 双栏布局 */
+.layout-grid { display: flex; gap: 20px; align-items: flex-start; }
+.main-content { flex: 2; min-width: 0; }
+.sidebar { flex: 1; }
+
+/* 侧边栏管理员卡片 */
+.sidebar-card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: sticky; top: 80px; }
+.sidebar-card h4 { font-size: 15px; color: #121212; margin-bottom: 12px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
+.sidebar-card p { font-size: 13px; color: #666; margin-bottom: 8px; }
+.sidebar-card .admin-role { background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+
+/* 文件上传样式 */
+.file-upload-wrapper { background: #f9f9f9; border: 1px dashed #d0d0d0; padding: 15px; border-radius: 6px; text-align: center; margin-bottom: 15px; cursor: pointer; }
+.file-upload-wrapper input[type="file"] { display: none; }
+.file-upload-label { color: #0084ff; font-weight: bold; cursor: pointer; }
+.file-name { font-size: 13px; color: #666; margin-top: 5px; }
