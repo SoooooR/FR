@@ -31,6 +31,11 @@
       <button class="btn-submit" onclick="createActivity()">发布活动</button>
     </div>
 
+        <!-- 仅管理员可见：待审核活动申请 -->
+    <div class="form-card" id="pending-apps-card" style="display:none; border-left: 4px solid #f59e0b;">
+      <h2>📋 待审核的活动申请</h2>
+      <div id="pending-apps-list"></div>
+    </div>
     <h2 style="margin-bottom:15px; font-size:18px;">🎯 进行中的活动</h2>
     <div id="activities-list"></div>
   </div>
