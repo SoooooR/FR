@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>家庭网站 - 资金审批</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">🏠 家庭网站</a>
+    <div class="nav-links">
+      <a href="index.html">首页发帖</a>
+      <a href="fund.html" class="active">资金审批</a>
+      <a href="resources.html">资源分享</a>
+    </div>
+    <div class="user-actions">
+      欢迎，<span id="current-user">加载中...</span>
+      <a href="javascript:void(0)" onclick="logout()">退出</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="form-card">
+      <h2>💰 提交资金申请</h2>
+      <div class="form-group"><label>申请金额（元）</label><input type="number" id="fund-amount" placeholder="0.00"></div>
+      <div class="form-group"><label>申请理由</label><textarea id="fund-reason" placeholder="请详细说明用途..."></textarea></div>
+      <div class="form-group"><label>审核人 ID（请向管理员询问）</label><input type="text" id="reviewer-id" placeholder="粘贴审核人的 UUID"></div>
+      <button class="btn-submit" onclick="submitFundRequest()">提交申请</button>
+    </div>
+    <div id="my-requests"></div>
+    <div id="pending-reviews"></div>
+  </div>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="fund.js"></script>
+</body>
+</html>
