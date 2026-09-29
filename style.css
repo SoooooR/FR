@@ -152,3 +152,20 @@ body {
 .activity-reward { color: #ef4444; font-weight: bold; font-size: 15px; margin: 10px 0; }
 .activity-actions { margin-top: 15px; }
 .activity-actions button { margin-right: 10px; }
+
+/* 点赞和评论区域 */
+.post-actions { display: flex; gap: 20px; margin-top: 15px; padding-top: 15px; border-top: 1px solid #f0f0f0; }
+.action-btn { background: none; border: none; cursor: pointer; color: #8590a6; font-size: 14px; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
+.action-btn:hover { color: #0084ff; }
+.action-btn.liked { color: #0084ff; font-weight: bold; }
+.admin-delete-btn { color: #ef4444; background: none; border: none; cursor: pointer; font-size: 13px; margin-left: 10px; }
+
+/* 评论区 */
+.comments-section { margin-top: 15px; background: #f9f9f9; padding: 15px; border-radius: 8px; }
+.comment-item { font-size: 13px; margin-bottom: 10px; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px; }
+.comment-item:last-child { border-bottom: none; margin-bottom: 0; }
+.comment-item .c-author { font-weight: bold; color: #121212; }
+.comment-item .c-time { color: #8590a6; font-size: 11px; margin-left: 10px; }
+.comment-input-group { display: flex; gap: 10px; margin-top: 10px; }
+.comment-input-group input { flex: 1; padding: 8px; border: 1px solid #e0e0e0; border-radius: 6px; outline: none; font-size: 13px; }
+.comment-input-group button { padding: 8px 15px; background: #0084ff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
