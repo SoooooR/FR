@@ -81,13 +81,29 @@ async function loadResources() {
   const profileMap = {};
   (profiles || []).forEach(p => profileMap[p.id] = p.username);
 
-  list.innerHTML = posts.map(p => `
+// 在 resources.js 顶部，加上 currentUserRole 变量
+let currentUserRole = 'member';
+// 在 init() 或 checkAuth() 里获取角色
+// const { data: profile } = await siteApp.from('profiles').select('username, role').eq('id', session.user.id).single();
+// currentUserRole = profile?.role || 'member';
+
+// 更新 loadResources 的渲染部分：
+list.innerHTML = posts.map(p => `
     <div class="post-card">
-      <h3>${p.title}</h3>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <h3>${p.title}</h3>
+        ${currentUserRole === 'admin' ? `<button class="admin-delete-btn" onclick="deleteResource('${p.id}')">🗑️ 删除</button>` : ''}
+      </div>
       <div class="meta">分享者：${profileMap[p.author_id] || '未知'} · ${new Date(p.created_at).toLocaleString()}</div>
       <div class="content">${marked.parse(p.content)}</div>
     </div>
   `).join('');
+
+// 在文件最末尾加上删除函数：
+async function deleteResource(id) {
+  if (!confirm('确定要删除这条资源吗？')) return;
+  await siteApp.from('posts').delete().eq('id', id);
+  loadResources();
 }
 
 async function logout() { await siteApp.auth.signOut(); window.location.href = 'login.html'; }
