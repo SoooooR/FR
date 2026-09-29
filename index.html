@@ -22,17 +22,29 @@
   </nav>
 
   <div class="container">
-    <!-- 知乎风格发帖框 -->
-    <div class="publish-card">
-      <input type="text" id="post-title" placeholder="输入标题（选填）">
-      <textarea id="post-content" placeholder="分享你的家庭故事、生活点滴..."></textarea>
-      <div class="publish-footer">
-        <button onclick="createPost()">发布</button>
+    <div class="layout-grid">
+      <!-- 左侧主内容 -->
+      <div class="main-content">
+        <div class="publish-card">
+          <input type="text" id="post-title" placeholder="输入标题（选填）">
+          <textarea id="post-content" placeholder="分享你的家庭故事、生活点滴..."></textarea>
+          <div class="publish-footer"><button onclick="createPost()">发布</button></div>
+        </div>
+        <div id="posts-list"></div>
+      </div>
+
+      <!-- 右侧侧边栏 -->
+      <div class="sidebar">
+        <div class="sidebar-card">
+          <h4>👑 管理员信息</h4>
+          <p><span class="admin-role">超级管理员</span></p>
+          <p>昵称：<strong>Prime</strong></p>
+          <p>邮箱：admin@family.com</p>
+          <p>微信：family_admin</p>
+          <p style="font-size:12px; color:#999; margin-top:15px;">如有账号问题、审批权限疑问，请联系管理员。</p>
+        </div>
       </div>
     </div>
-
-    <!-- 帖子展示区 -->
-    <div id="posts-list"></div>
   </div>
 
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
