@@ -126,3 +126,29 @@ body {
 .file-upload-wrapper input[type="file"] { display: none; }
 .file-upload-label { color: #0084ff; font-weight: bold; cursor: pointer; }
 .file-name { font-size: 13px; color: #666; margin-top: 5px; }
+
+/* 成员列表项 */
+.member-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+.member-item:last-child { border-bottom: none; }
+.member-avatar {
+  width: 28px; height: 28px; border-radius: 50%; background: #0084ff; color: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: 12px; margin-right: 10px;
+}
+.member-role { margin-left: auto; font-size: 12px; color: #8590a6; }
+.member-role.admin { color: #f59e0b; font-weight: bold; }
+
+/* 活动卡片 */
+.activity-card {
+  background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px;
+  border-left: 4px solid #10b981;
+}
+.activity-card h3 { font-size: 18px; margin-bottom: 8px; }
+.activity-reward { color: #ef4444; font-weight: bold; font-size: 15px; margin: 10px 0; }
+.activity-actions { margin-top: 15px; }
+.activity-actions button { margin-right: 10px; }
