@@ -1,4 +1,3 @@
-// resources.js
 const siteApp = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 async function checkAuth() {
@@ -8,17 +7,65 @@ async function checkAuth() {
   document.getElementById('current-user').textContent = profile?.username || '用户';
 }
 
+// 更新界面上显示的文件名
+function updateFileName() {
+  const fileInput = document.getElementById('resource-file');
+  const fileNameDisplay = document.getElementById('file-name');
+  if (fileInput.files.length > 0) {
+    fileNameDisplay.textContent = '已选择：' + fileInput.files[0].name;
+    fileNameDisplay.style.color = '#0084ff';
+  } else {
+    fileNameDisplay.textContent = '尚未选择文件';
+    fileNameDisplay.style.color = '#666';
+  }
+}
+
 async function shareResource() {
   const title = document.getElementById('resource-title').value;
   const url = document.getElementById('resource-url').value;
   const desc = document.getElementById('resource-desc').value;
-  if (!title || !url) { alert('标题和链接不能为空！'); return; }
+  const fileInput = document.getElementById('resource-file');
+
+  if (!title) { alert('资源名称不能为空！'); return; }
+
+  let fileUrl = '';
+  let fileName = '';
+
+  // 如果有选择文件，先上传到 Supabase Storage
+  if (fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    // 限制文件大小 50MB
+    if (file.size > 50 * 1024 * 1024) { alert('文件不能超过 50MB！'); return; }
+    
+    const { data: { session } } = await siteApp.auth.getSession();
+    // 生成唯一文件路径：用户ID/时间戳-文件名
+    const filePath = `${session.user.id}/${Date.now()}-${file.name}`;
+    
+    // 上传文件
+    const { error: uploadError } = await siteApp.storage.from('files').upload(filePath, file);
+    if (uploadError) { alert('文件上传失败：' + uploadError.message); return; }
+
+    // 获取文件的公开访问 URL
+    const { data: urlData } = siteApp.storage.from('files').getPublicUrl(filePath);
+    fileUrl = urlData.publicUrl;
+    fileName = file.name;
+  }
+
+  // 组装内容（Markdown 格式）
+  let content = desc;
+  if (fileUrl) content += `\n\n**📎 附件下载：[${fileName}](${fileUrl})**`;
+  if (url) content += `\n\n**🔗 外部链接：**[点击访问](${url})`;
 
   const { data: { session } } = await siteApp.auth.getSession();
-  await siteApp.from('posts').insert({ author_id: session.user.id, title, content: `${desc}\n\n链接：${url}`, category: 'resource' });
+  await siteApp.from('posts').insert({ author_id: session.user.id, title, content, category: 'resource' });
+
+  // 清空输入框
   document.getElementById('resource-title').value = '';
   document.getElementById('resource-url').value = '';
   document.getElementById('resource-desc').value = '';
+  document.getElementById('resource-file').value = '';
+  updateFileName();
+  
   loadResources();
   alert('资源分享成功！');
 }
