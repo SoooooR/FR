@@ -104,3 +104,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   animate();
 });
+// ================= 全站修改密码功能 =================
+window.changePassword = async function() {
+  const newPassword = prompt("请输入新密码（至少6位）：");
+  if (!newPassword || newPassword.length < 6) { alert("密码长度不能少于6位！"); return; }
+  
+  const confirmPassword = prompt("请再次输入新密码确认：");
+  if (newPassword !== confirmPassword) { alert("两次输入的密码不一致！"); return; }
+
+  const tempClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const { error } = await tempClient.auth.updateUser({ password: newPassword });
+  
+  if (error) { alert("修改密码失败：" + error.message); return; }
+  alert("密码修改成功！下次登录请使用新密码。");
+};
