@@ -191,3 +191,61 @@ body {
 }
 .member-role { margin-left: auto; font-size: 12px; color: #64748b; }
 .member-role.admin { color: #f59e0b; font-weight: bold; background: rgba(245, 158, 11, 0.1); padding: 2px 8px; border-radius: 10px; }
+
+
+/* =========================================
+   兼容并美化：活动、资金、资源三个页面
+   ========================================= */
+
+/* 1. 统一三个页面的居中容器 */
+.container {
+  max-width: 800px; /* 限制宽度，防止内容占满屏幕 */
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* 2. 毛玻璃卡片（表单、审核区、发帖卡片等） */
+.form-card, .activity-card, .post-card, .sidebar-card, .pending-apps-card {
+  background: rgba(30, 41, 59, 0.65) !important; /* 深色半透明 */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+/* 3. 表单区域 */
+.form-card h2 { font-size: 20px; color: #fff; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; color: #cbd5e1; }
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.1); 
+  background: rgba(15, 23, 42, 0.6); color: #fff; border-radius: 8px; 
+  font-size: 15px; font-family: inherit; outline: none; transition: 0.3s;
+}
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: #0084ff; }
+.form-group textarea { height: 120px; resize: vertical; }
+.form-group select option { background: #0f172a; color: #fff; }
+
+/* 4. 统一主按钮样式 */
+.btn-submit {
+  background: #0084ff; color: white; border: none; padding: 12px 32px;
+  border-radius: 24px; cursor: pointer; font-size: 15px; font-weight: bold;
+  transition: 0.2s; width: auto; min-width: 120px;
+}
+.btn-submit:hover { background: #0066cc; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,132,255,0.3); }
+
+/* 5. 活动卡片专属样式 */
+.activity-card { border-left: 4px solid #10b981 !important; }
+.activity-card h3 { font-size: 22px; color: #fff; margin-bottom: 12px; font-weight: 600; }
+.activity-reward { color: #f59e0b; font-weight: bold; font-size: 16px; margin-bottom: 16px; background: rgba(245,158,11,0.1); display: inline-block; padding: 4px 12px; border-radius: 12px; }
+.activity-actions { margin-top: 16px; display: flex; align-items: center; gap: 12px; }
+
+/* 6. 详情和列表展示区 */
+#my-requests h3, #pending-reviews h3, #resources-list + h2, #activities-list + h2 {
+  font-size: 18px; color: #fff; margin-bottom: 16px;
+}
+#my-requests, #pending-reviews { margin-top: 32px; }
+
