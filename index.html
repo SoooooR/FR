@@ -23,24 +23,32 @@
     </div>
   </nav>
 
-  <div class="container">
-    <div class="layout-grid">
-      <div class="main-content">
-        <div class="publish-card">
-          <input type="text" id="post-title" placeholder="输入标题（选填）">
-          <textarea id="post-content" placeholder="分享一下你的生活吧😀"></textarea>
-          <div class="publish-footer"><button onclick="createPost()">发布</button></div>
+  <!-- 核心布局：居中容器 -->
+  <div class="app-container">
+    
+    <!-- 左侧主内容区域 -->
+    <main class="main-feed">
+      <!-- 发帖卡片 -->
+      <div class="publish-card glass-card">
+        <input type="text" id="post-title" class="publish-title" placeholder="输入标题（选填）">
+        <textarea id="post-content" class="publish-content" placeholder="分享你的生活吧 😄"></textarea>
+        <div class="publish-footer">
+          <button class="btn-primary" onclick="createPost()">发布</button>
         </div>
-        <div id="posts-list"></div>
       </div>
 
-      <div class="sidebar">
-        <div class="sidebar-card">
-          <h4>👨‍👩‍👧‍👦 家庭成员</h4>
-          <div id="member-list"><p style="font-size:13px; color:#999;">加载中...</p></div>
-        </div>
+      <!-- 帖子列表 -->
+      <div id="posts-list"></div>
+    </main>
+
+    <!-- 右侧侧边栏 -->
+    <aside class="sidebar">
+      <div class="glass-card sidebar-card">
+        <h4 class="sidebar-title">👨‍👩‍👧‍👦 家庭成员</h4>
+        <div id="member-list"><p style="font-size:13px; color:#999;">加载中...</p></div>
       </div>
-    </div>
+    </aside>
+
   </div>
 
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
