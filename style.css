@@ -169,3 +169,56 @@ body {
 .comment-input-group { display: flex; gap: 10px; margin-top: 10px; }
 .comment-input-group input { flex: 1; padding: 8px; border: 1px solid #e0e0e0; border-radius: 6px; outline: none; font-size: 13px; }
 .comment-input-group button { padding: 8px 15px; background: #0084ff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
+
+
+/* =========================================
+   终极炫酷背景：动态霓虹光斑 + 毛玻璃
+   ========================================= */
+
+/* 1. 深色底 + 动态流动光斑 */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #121212;
+  line-height: 1.6;
+  min-height: 100vh;
+  background-color: #0f172a; /* 深空蓝底色 */
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.25), transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.25), transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(236, 72, 153, 0.2), transparent 50%);
+  background-size: 200% 200%;
+  animation: bgMove 15s ease-in-out infinite alternate;
+  overflow-x: hidden;
+}
+
+/* 背景光斑缓慢游走动画 */
+@keyframes bgMove {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 100%; }
+}
+
+/* 2. 把所有白色卡片变成高级毛玻璃 */
+.navbar, .publish-card, .post-card, .form-card, .sidebar-card, .activity-card {
+  background: rgba(255, 255, 255, 0.85) !important; /* 高透明白色 */
+  backdrop-filter: blur(16px); /* 核心：背景模糊 */
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important; /* 更深的投影增加悬浮感 */
+}
+
+/* 3. 顶部导航栏加深一点透明度，更显高级 */
+.navbar {
+  background: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* 4. 输入框保持纯白或浅灰，保证输入清晰 */
+.publish-card input, .publish-card textarea, .form-group input, .form-group textarea, .form-group select, .comment-input-group input {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+/* 5. 细微调整文字颜色，确保在毛玻璃上依然清晰 */
+.navbar .nav-links a { color: #4b5563; }
+.navbar .nav-links a.active { color: #0084ff; }
+.meta, .member-role, .c-time { color: #6b7280; }
