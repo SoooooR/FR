@@ -11,12 +11,15 @@ async function init() {
   document.getElementById('current-user').textContent = profile?.username || '用户';
   currentUserRole = profile?.role || 'member';
 
+  // 如果是管理员，显示发布活动和审核区域
   if (currentUserRole === 'admin') {
     document.getElementById('create-activity-card').style.display = 'block';
     document.getElementById('pending-apps-card').style.display = 'block';
     document.getElementById('admin-all-act-records').style.display = 'block';
     loadPendingApplications();
   }
+  
+  // 无论普通用户还是管理员，都要加载活动列表
   loadActivities();
 }
 
@@ -34,22 +37,52 @@ async function createActivity() {
 }
 
 async function loadActivities() {
-  const { data: activities } = await siteApp.from('activities').select('*').order('created_at', { ascending: false });
   const list = document.getElementById('activities-list');
-  if (!activities || activities.length === 0) { list.innerHTML = '<p style="text-align:center; color:#8590a6; margin-top:50px;">目前没有活动。</p>'; return; }
+  if (!list) return; // 容错：如果页面没有这个元素，直接结束
 
-  const { data: myApps } = await siteApp.from('activity_applications').select('activity_id, status').eq('applicant_id', currentUser.id);
-  const myAppMap = {}; (myApps || []).forEach(a => myAppMap[a.activity_id] = a.status);
+  // 1. 获取所有活动
+  const { data: activities, error: actError } = await siteApp.from('activities').select('*').order('created_at', { ascending: false });
+  
+  if (actError) {
+    console.error("加载活动失败：", actError);
+    list.innerHTML = '<p style="text-align:center; color:#ef4444; margin-top:50px;">加载活动失败，请检查网络或权限。</p>';
+    return;
+  }
 
+  if (!activities || activities.length === 0) {
+    list.innerHTML = '<p style="text-align:center; color:#8590a6; margin-top:50px;">目前没有活动。</p>';
+    return;
+  }
+
+  // 2. 获取当前用户的申请记录（容错：如果 currentUser 为空，就不查）
+  let myAppMap = {};
+  if (currentUser) {
+    const { data: myApps } = await siteApp.from('activity_applications').select('activity_id, status').eq('applicant_id', currentUser.id);
+    (myApps || []).forEach(a => myAppMap[a.activity_id] = a.status);
+  }
+
+  // 3. 渲染列表
   list.innerHTML = activities.map(a => {
-    const status = myAppMap[a.id];
+    const status = myAppMap[a.id]; // pending, approved, rejected, 或 undefined
     let btnHtml = '';
-    if (!status) btnHtml = `<button class="btn-submit" style="width:auto; padding:6px 20px; font-size:14px;" onclick="applyActivity('${a.id}')">申请参加</button>`;
-    else if (status === 'pending') btnHtml = `<span style="color:#f59e0b; font-weight:bold;">⏳ 审核中</span>`;
-    else if (status === 'approved') btnHtml = `<span style="color:#10b981; font-weight:bold;">✅ 已通过（获得 ${a.reward}）</span>`;
-    else if (status === 'rejected') btnHtml = `<span style="color:#ef4444; font-weight:bold;">❌ 已拒绝</span>`;
+    
+    if (!status) {
+      btnHtml = `<button class="btn-submit" style="width:auto; padding:6px 20px; font-size:14px;" onclick="applyActivity('${a.id}')">申请参加</button>`;
+    } else if (status === 'pending') {
+      btnHtml = `<span style="color:#f59e0b; font-weight:bold;">⏳ 审核中</span>`;
+    } else if (status === 'approved') {
+      btnHtml = `<span style="color:#10b981; font-weight:bold;">✅ 已通过（获得 ${a.reward}）</span>`;
+    } else if (status === 'rejected') {
+      btnHtml = `<span style="color:#ef4444; font-weight:bold;">❌ 已拒绝</span>`;
+    }
 
-    return `<div class="activity-card"><h3>${a.title}</h3><div class="activity-reward">💰 奖励：${a.reward}</div><div class="content" style="font-size:14px; color:#cbd5e1;">${a.description}</div><div class="activity-actions">${btnHtml}</div></div>`;
+    return `
+    <div class="activity-card">
+      <h3>${a.title}</h3>
+      <div class="activity-reward">💰 奖励：${a.reward}</div>
+      <div class="content" style="font-size:14px; color:#cbd5e1;">${a.description}</div>
+      <div class="activity-actions">${btnHtml}</div>
+    </div>`;
   }).join('');
 }
 
@@ -68,7 +101,8 @@ async function applyActivity(activityId) {
 async function loadPendingApplications() {
   const pendingList = document.getElementById('pending-apps-list');
   const historyList = document.getElementById('all-act-list');
-  
+  if (!pendingList || !historyList) return; // 容错
+
   const { data: apps } = await siteApp.from('activity_applications').select('*, activities(title, reward)').order('created_at', { ascending: false });
   const { data: profiles } = await siteApp.from('profiles').select('id, username');
   const profileMap = {}; (profiles || []).forEach(p => profileMap[p.id] = p.username);
