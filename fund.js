@@ -37,21 +37,24 @@ async function loadReviewers() {
 async function submitFundRequest() {
   const amount = document.getElementById('fund-amount').value;
   const reason = document.getElementById('fund-reason').value;
-  const reviewerId = document.getElementById('reviewer-id').value; // 这里获取的是用户ID
+  const reviewerId = document.getElementById('reviewer-id').value;
+  const paymentAddress = document.getElementById('fund-payment-address').value; // 新增
 
-  if (!amount || !reason || !reviewerId) { alert('请填写完整！'); return; }
+  if (!amount || !reason || !reviewerId || !paymentAddress) { alert('请填写完整！'); return; }
 
   const { error } = await siteApp.from('fund_requests').insert({
     applicant_id: currentUser.id,
     reviewer_id: reviewerId,
     amount: parseFloat(amount),
-    reason
+    reason,
+    payment_address: paymentAddress // 新增
   });
 
   if (error) { alert('提交失败：' + error.message); return; }
 
   document.getElementById('fund-amount').value = '';
   document.getElementById('fund-reason').value = '';
+  document.getElementById('fund-payment-address').value = ''; // 清空
   document.getElementById('reviewer-id').value = '';
   loadFundRequests();
   alert('申请已提交！');
@@ -70,6 +73,7 @@ async function loadFundRequests() {
     (myReqs || []).map(r => `
     <div class="post-card" style="margin-bottom:10px;">
       <div>金额：¥${r.amount} | 理由：${r.reason}</div>
+      <div>收款地址：${r.payment_address || '未填写'}</div>
       <div class="meta">审核人：${profileMap[r.reviewer_id] || '未知'} | 状态：<span class="status-${r.status}">${
         r.status === 'pending' ? '待审核' : r.status === 'approved' ? '已通过' : '已拒绝'
       }</span></div>
@@ -80,6 +84,7 @@ async function loadFundRequests() {
     <div class="post-card" style="margin-bottom:10px;">
       <div>申请人：${profileMap[r.applicant_id] || '未知'} | 金额：¥${r.amount}</div>
       <div>理由：${r.reason}</div>
+      <div>收款地址：<b>${r.payment_address || '未填写'}</b></div>
       <div style="margin-top:10px;">
         <button class="btn-submit" style="background:#10b981; width:auto; padding:6px 16px; font-size:13px; margin-right:10px;" onclick="approveRequest('${r.id}')">通过</button>
         <button class="btn-submit" style="background:#ef4444; width:auto; padding:6px 16px; font-size:13px;" onclick="rejectRequest('${r.id}')">拒绝</button>
