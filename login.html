@@ -19,9 +19,9 @@
   <!-- 注册表单 -->
   <div id="register-form" style="display:none">
     <h2>注册</h2>
-    <input type="text" id="reg-username" placeholder="用户名">
-    <input type="email" id="reg-email" placeholder="邮箱">
-    <input type="password" id="reg-password" placeholder="密码">
+        <input type="text" id="reg-username" placeholder="用户名" onkeydown="if(event.key === 'Enter') register()">
+    <input type="email" id="reg-email" placeholder="邮箱" onkeydown="if(event.key === 'Enter') register()">
+    <input type="password" id="reg-password" placeholder="密码" onkeydown="if(event.key === 'Enter') register()">
     <button onclick="register()">注册</button>
     <p>已有账号？<a href="javascript:void(0)" onclick="showLogin()">登录</a></p>
   </div>
