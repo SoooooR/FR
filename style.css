@@ -189,6 +189,8 @@ body {
   background-size: 200% 200%;
   animation: bgMove 15s ease-in-out infinite alternate;
   overflow-x: hidden;
+  position: relative; /* 新增 */
+  z-index: 1;         /* 新增 */
 }
 
 /* 背景光斑缓慢游走动画 */
@@ -218,24 +220,9 @@ body {
   border: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
 
-/* ================= 鼠标跟随光晕特效 ================= */
-#cursor-glow {
-  position: fixed;
-  width: 300px;
-  height: 300px;
-  /* 渐变光晕，中心亮蓝，边缘紫，最外层透明 */
-  background: radial-gradient(circle, rgba(56, 189, 248, 0.4) 0%, rgba(168, 85, 247, 0.2) 35%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none; /* 关键！让鼠标穿透，不影响点击 */
-  z-index: 9999; /* 浮在所有内容最上层 */
-  transform: translate(-50%, -50%);
-  transition: width 0.3s, height 0.3s; /* 平滑过渡 */
-  mix-blend-mode: screen; /* 颜色叠加模式，更亮更炫 */
-}
-
-
-
 /* 5. 细微调整文字颜色，确保在毛玻璃上依然清晰 */
 .navbar .nav-links a { color: #4b5563; }
 .navbar .nav-links a.active { color: #0084ff; }
 .meta, .member-role, .c-time { color: #6b7280; }
+
+
