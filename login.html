@@ -10,8 +10,8 @@
   <!-- 登录表单 -->
   <div id="login-form">
     <h2>登录</h2>
-    <input type="email" id="login-email" placeholder="邮箱">
-    <input type="password" id="login-password" placeholder="密码">
+    <input type="email" id="login-email" placeholder="邮箱" onkeydown="if(event.key === 'Enter') login()">
+    <input type="password" id="login-password" placeholder="密码" onkeydown="if(event.key === 'Enter') login()">
     <button onclick="login()">登录</button>
     <p>没有账号？<a href="javascript:void(0)" onclick="showRegister()">注册</a></p>
   </div>
