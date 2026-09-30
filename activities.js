@@ -72,10 +72,19 @@ async function loadActivities() {
   }).join('');
 }
 
+// 申请参加活动（新增：要求填写收款地址）
 async function applyActivity(activityId) {
+  // 弹出提示让用户输入收款地址
+  const paymentAddress = prompt("请输入您的收款地址（如支付宝/微信/银行卡号）：");
+  if (!paymentAddress) { alert('必须填写收款地址才能申请！'); return; }
+
   const { error } = await siteApp.from('activity_applications').insert({
-    activity_id: activityId, applicant_id: currentUser.id, status: 'pending'
+    activity_id: activityId, 
+    applicant_id: currentUser.id, 
+    status: 'pending',
+    payment_address: paymentAddress // 存入数据库
   });
+
   if (error) { alert('申请失败：' + error.message); return; }
   alert('申请成功！请等待管理员审核。');
   loadActivities();
@@ -102,6 +111,7 @@ async function loadPendingApplications() {
     <div class="post-card" style="margin-bottom:10px; border-left: 3px solid #f59e0b;">
       <div>申请人：<b>${profileMap[a.applicant_id] || '未知'}</b></div>
       <div>申请活动：${a.activities?.title} （奖励：${a.activities?.reward}）</div>
+      <div style="color: #0084ff; margin-top: 5px;">收款地址：${a.payment_address || '未填写'}</div> <!-- 新增显示收款地址 -->
       <div style="margin-top:10px;">
         <button class="btn-submit" style="background:#10b981; width:auto; padding:6px 16px; font-size:13px; margin-right:10px;" onclick="approveApp('${a.id}')">通过</button>
         <button class="btn-submit" style="background:#ef4444; width:auto; padding:6px 16px; font-size:13px;" onclick="rejectApp('${a.id}')">拒绝</button>
