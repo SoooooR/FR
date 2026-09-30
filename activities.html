@@ -17,12 +17,13 @@
     </div>
     <div class="user-actions">
       欢迎，<span id="current-user">加载中...</span>
+      <a href="javascript:void(0)" onclick="changePassword()">改密</a>
       <a href="javascript:void(0)" onclick="logout()">退出</a>
     </div>
   </nav>
 
   <div class="container">
-    <!-- 仅管理员可见：发布活动表单 -->
+    <!-- 区域 1：仅管理员可见（发布活动） -->
     <div class="form-card" id="create-activity-card" style="display:none;">
       <h2>📢 发布新活动（仅管理员）</h2>
       <div class="form-group"><label>活动名称</label><input type="text" id="act-title" placeholder="例如：成长计划"></div>
@@ -31,16 +32,21 @@
       <button class="btn-submit" onclick="createActivity()">发布活动</button>
     </div>
 
-        <!-- 仅管理员可见：待审核活动申请 -->
+    <!-- 区域 2：仅管理员可见（审核记录） -->
     <div class="form-card" id="pending-apps-card" style="display:none; border-left: 4px solid #f59e0b;">
       <h2>📋 待审核的活动申请</h2>
       <div id="pending-apps-list"></div>
-       <!-- 新增：管理员专属的全量活动记录区域 -->
-      <div id="admin-all-act-records" style="display:none;">
+      
+      <!-- 历史记录区（嵌套在审核卡片内部是合理的） -->
+      <div id="admin-all-act-records" style="display:none; margin-top: 20px;">
         <h3 style="margin-top:32px; margin-bottom:16px; color:#fff;">📚 历史活动申请记录（管理员视图）</h3>
         <div id="all-act-list"></div>
+      </div>
     </div>
-    <h2 style="margin-bottom:15px; font-size:18px;">🎯 进行中的活动</h2>
+
+    <!-- 区域 3：所有人可见（进行中的活动） -->
+    <!-- ⚠️ 注意：这个 h2 和 div 必须在所有管理员专属 div 的【外面】！ -->
+    <h2 style="margin-bottom:15px; font-size:18px; color:#fff;">🎯 进行中的活动</h2>
     <div id="activities-list"></div>
   </div>
 
