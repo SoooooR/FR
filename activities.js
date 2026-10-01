@@ -89,7 +89,7 @@ async function loadActivities() {
         <h3>${a.title}</h3>
         ${deleteBtn}
       </div>
-      <div class="activity-reward">💰 奖励：${a.reward}</div>
+      <div class="activity-reward">💰 金额：${a.reward}</div>
       <div class="content" style="font-size:14px; color:#cbd5e1;">${a.description}</div>
       <div class="activity-actions">${btnHtml}</div>
     </div>`;
@@ -142,7 +142,7 @@ async function loadPendingApplications() {
   pendingList.innerHTML = pendingApps.length === 0 ? '<p style="color:#8590a6;">暂无待审核的申请。</p>' : pendingApps.map(a => `
     <div class="post-card" style="border-left: 4px solid #f59e0b; margin-bottom:12px;">
       <div><b>申请人：</b>${profileMap[a.applicant_id] || '未知'}</div>
-      <div><b>活动：</b>${a.activities?.title} （奖励：${a.activities?.reward}）</div>
+      <div><b>活动：</b>${a.activities?.title} （金额：${a.activities?.reward}）</div>
       <div style="color: #38bdf8;"><b>收款地址：</b>${a.payment_address || '未填写'}</div>
       <div style="margin-top:12px;">
         <button class="btn-submit" style="background:#10b981; width:auto; padding:6px 16px; font-size:13px; margin-right:10px;" onclick="approveApp('${a.id}')">通过</button>
@@ -153,7 +153,7 @@ async function loadPendingApplications() {
   historyList.innerHTML = processedApps.length === 0 ? '<p style="color:#8590a6;">暂无历史记录。</p>' : processedApps.map(a => `
     <div class="post-card" style="opacity:0.85; margin-bottom:12px;">
       <div><b>申请人：</b>${profileMap[a.applicant_id] || '未知'}</div>
-      <div><b>活动：</b>${a.activities?.title} （奖励：${a.activities?.reward}）</div>
+      <div><b>活动：</b>${a.activities?.title} （金额：${a.activities?.reward}）</div>
       <div style="color: #38bdf8;"><b>收款地址：</b>${a.payment_address || '未填写'}</div>
       <div style="margin-top:8px;">状态：<span class="status-${a.status}">${a.status === 'approved' ? '✅ 已通过' : '❌ 已拒绝'}</span></div>
     </div>`).join('');
