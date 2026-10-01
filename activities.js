@@ -11,15 +11,14 @@ async function init() {
   document.getElementById('current-user').textContent = profile?.username || '用户';
   currentUserRole = profile?.role || 'member';
 
-  // 如果是管理员，显示发布活动和审核区域
+  // 如果当前用户是管理员，显示审核区域
   if (currentUserRole === 'admin') {
-    document.getElementById('create-activity-card').style.display = 'block';
     document.getElementById('pending-apps-card').style.display = 'block';
     document.getElementById('admin-all-act-records').style.display = 'block';
     loadPendingApplications();
   }
   
-  // 无论普通用户还是管理员，都要加载活动列表
+  // 所有人刷新页面都会加载活动列表
   loadActivities();
 }
 
@@ -28,7 +27,10 @@ async function createActivity() {
   const reward = document.getElementById('act-reward').value;
   const desc = document.getElementById('act-desc').value;
   if (!title || !reward || !desc) { alert('请填写完整！'); return; }
-  await siteApp.from('activities').insert({ title, reward, description: desc, creator_id: currentUser.id });
+
+  const { error } = await siteApp.from('activities').insert({ title, reward, description: desc, creator_id: currentUser.id });
+  if (error) { alert('发布失败：' + error.message); return; }
+  
   document.getElementById('act-title').value = '';
   document.getElementById('act-reward').value = '';
   document.getElementById('act-desc').value = '';
@@ -38,7 +40,7 @@ async function createActivity() {
 
 async function loadActivities() {
   const list = document.getElementById('activities-list');
-  if (!list) return; // 容错：如果页面没有这个元素，直接结束
+  if (!list) return;
 
   // 1. 获取所有活动
   const { data: activities, error: actError } = await siteApp.from('activities').select('*').order('created_at', { ascending: false });
@@ -54,7 +56,7 @@ async function loadActivities() {
     return;
   }
 
-  // 2. 获取当前用户的申请记录（容错：如果 currentUser 为空，就不查）
+  // 2. 获取当前用户的申请记录
   let myAppMap = {};
   if (currentUser) {
     const { data: myApps } = await siteApp.from('activity_applications').select('activity_id, status').eq('applicant_id', currentUser.id);
@@ -63,7 +65,7 @@ async function loadActivities() {
 
   // 3. 渲染列表
   list.innerHTML = activities.map(a => {
-    const status = myAppMap[a.id]; // pending, approved, rejected, 或 undefined
+    const status = myAppMap[a.id];
     let btnHtml = '';
     
     if (!status) {
@@ -76,14 +78,35 @@ async function loadActivities() {
       btnHtml = `<span style="color:#ef4444; font-weight:bold;">❌ 已拒绝</span>`;
     }
 
+    // 判断是否可以删除（发布者本人 或 管理员）
+    const isOwner = currentUser.id === a.creator_id;
+    const canDelete = isOwner || currentUserRole === 'admin';
+    const deleteBtn = canDelete ? `<button class="admin-delete-btn" style="color:#ef4444; background:none; border:none; cursor:pointer;" onclick="deleteActivity('${a.id}')">🗑️ 删除</button>` : '';
+
     return `
-    <div class="activity-card">
-      <h3>${a.title}</h3>
-      <div class="activity-reward">💰 金额：${a.reward}</div>
+    <div class="activity-card" style="position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <h3>${a.title}</h3>
+        ${deleteBtn}
+      </div>
+      <div class="activity-reward">💰 奖励：${a.reward}</div>
       <div class="content" style="font-size:14px; color:#cbd5e1;">${a.description}</div>
       <div class="activity-actions">${btnHtml}</div>
     </div>`;
   }).join('');
+}
+
+// 删除活动（仅限发布者本人或管理员）
+async function deleteActivity(id) {
+  if (!confirm('确定要删除这个活动吗？删除后相关的申请记录也会一并消失！')) return;
+  const { error } = await siteApp.from('activities').delete().eq('id', id);
+  if (error) { alert('删除失败：' + error.message); return; }
+  alert('活动已删除！');
+  loadActivities();
+  // 如果是管理员删除了有申请的记录，顺便刷新审核列表
+  if (currentUserRole === 'admin') {
+    loadPendingApplications();
+  }
 }
 
 async function applyActivity(activityId) {
@@ -97,11 +120,11 @@ async function applyActivity(activityId) {
   loadActivities();
 }
 
-// 管理员加载所有申请（包含待审核和历史）
+// ================= 以下为管理员专属功能 =================
 async function loadPendingApplications() {
   const pendingList = document.getElementById('pending-apps-list');
   const historyList = document.getElementById('all-act-list');
-  if (!pendingList || !historyList) return; // 容错
+  if (!pendingList || !historyList) return;
 
   const { data: apps } = await siteApp.from('activity_applications').select('*, activities(title, reward)').order('created_at', { ascending: false });
   const { data: profiles } = await siteApp.from('profiles').select('id, username');
@@ -119,7 +142,7 @@ async function loadPendingApplications() {
   pendingList.innerHTML = pendingApps.length === 0 ? '<p style="color:#8590a6;">暂无待审核的申请。</p>' : pendingApps.map(a => `
     <div class="post-card" style="border-left: 4px solid #f59e0b; margin-bottom:12px;">
       <div><b>申请人：</b>${profileMap[a.applicant_id] || '未知'}</div>
-      <div><b>活动：</b>${a.activities?.title} （金额：${a.activities?.reward}）</div>
+      <div><b>活动：</b>${a.activities?.title} （奖励：${a.activities?.reward}）</div>
       <div style="color: #38bdf8;"><b>收款地址：</b>${a.payment_address || '未填写'}</div>
       <div style="margin-top:12px;">
         <button class="btn-submit" style="background:#10b981; width:auto; padding:6px 16px; font-size:13px; margin-right:10px;" onclick="approveApp('${a.id}')">通过</button>
@@ -130,7 +153,7 @@ async function loadPendingApplications() {
   historyList.innerHTML = processedApps.length === 0 ? '<p style="color:#8590a6;">暂无历史记录。</p>' : processedApps.map(a => `
     <div class="post-card" style="opacity:0.85; margin-bottom:12px;">
       <div><b>申请人：</b>${profileMap[a.applicant_id] || '未知'}</div>
-      <div><b>活动：</b>${a.activities?.title} （金额：${a.activities?.reward}）</div>
+      <div><b>活动：</b>${a.activities?.title} （奖励：${a.activities?.reward}）</div>
       <div style="color: #38bdf8;"><b>收款地址：</b>${a.payment_address || '未填写'}</div>
       <div style="margin-top:8px;">状态：<span class="status-${a.status}">${a.status === 'approved' ? '✅ 已通过' : '❌ 已拒绝'}</span></div>
     </div>`).join('');
