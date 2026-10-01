@@ -83,9 +83,14 @@
         return; 
       }
 
-      if (data.user) {
+            if (data.user) {
         await ensureProfile(data.user.id, null);
       }
+      
+      // ⚠️ 关键：告诉下一个页面，用户刚刚点击了登录按钮，可以播放音乐了！
+      localStorage.setItem('musicPlaying', 'true');
+      
+      window.location.href = 'index.html';
       
       window.location.href = 'index.html';
     }
