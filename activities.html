@@ -32,22 +32,40 @@
       <button class="btn-submit" onclick="createActivity()">发布活动</button>
     </div>
 
-    <!-- 区域 2：仅管理员可见（审核记录） -->
-    <div class="form-card" id="pending-apps-card" style="display:none; border-left: 4px solid #f59e0b;">
-      <h2>📋 待审核的活动申请</h2>
-      <div id="pending-apps-list"></div>
-      
-      <!-- 历史记录区（嵌套在审核卡片内部是合理的） -->
-      <div id="admin-all-act-records" style="display:none; margin-top: 20px;">
-        <h3 style="margin-top:32px; margin-bottom:16px; color:#fff;">📚 历史活动申请记录（管理员视图）</h3>
-        <div id="all-act-list"></div>
-      </div>
-    </div>
-
-    <!-- 区域 3：所有人可见（进行中的活动） -->
-    <!-- ⚠️ 注意：这个 h2 和 div 必须在所有管理员专属 div 的【外面】！ -->
+      <div class="container">
+    
+    <!-- 第一部分：进行中的活动（最上面） -->
     <h2 style="margin-bottom:15px; font-size:18px; color:#fff;">🎯 进行中的活动</h2>
     <div id="activities-list"></div>
+
+    <!-- 第二部分：待审核和已申请的（中间） -->
+    <!-- 2.1 待我审核的申请（发布者或管理员可见） -->
+    <div id="creator-pending-section" style="display:none; margin-top: 32px;">
+      <h2 style="margin-bottom:15px; font-size:18px; color:#fff;">📋 待我审核的活动申请</h2>
+      <div id="creator-pending-list"></div>
+    </div>
+    
+    <!-- 2.2 我的申请记录（所有人可见） -->
+    <div id="my-applications-section" style="margin-top: 32px;">
+      <h2 style="margin-bottom:15px; font-size:18px; color:#fff;">📝 我的申请记录</h2>
+      <div id="my-applications-list"></div>
+    </div>
+
+    <!-- 第三部分：发布框（放在下面） -->
+    <div class="form-card" id="create-activity-card" style="margin-top: 32px;">
+      <h2>📢 发布新活动</h2>
+      <div class="form-group"><label>活动名称</label><input type="text" id="act-title" placeholder="例如：成长计划"></div>
+      <div class="form-group"><label>活动奖励</label><input type="text" id="act-reward" placeholder="例如：1000元"></div>
+      <div class="form-group"><label>活动详情</label><textarea id="act-desc" placeholder="描述活动内容、规则..."></textarea></div>
+      <button class="btn-submit" onclick="createActivity()">发布活动</button>
+    </div>
+
+    <!-- 第四部分：历史记录（管理员或发布者查看已处理完的申请） -->
+    <div id="history-section" style="display:none; margin-top: 32px;">
+      <h2 style="margin-bottom:15px; font-size:18px; color:#fff;">📚 历史活动申请记录</h2>
+      <div id="history-list"></div>
+    </div>
+
   </div>
 
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
