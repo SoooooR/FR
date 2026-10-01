@@ -149,4 +149,51 @@ async function changeUsername() {
 
 async function logout() { await siteApp.auth.signOut(); window.location.href = 'login.html'; }
 
+// ================= 音乐播放器逻辑 =================
+let isMusicPlaying = false;
+
+function togglePlay() {
+  const audio = document.getElementById('bg-music');
+  const btn = document.getElementById('play-btn');
+  if (!audio) return;
+
+  if (audio.paused) {
+    audio.play().then(() => {
+      isMusicPlaying = true;
+      if (btn) btn.textContent = '⏸️ 暂停';
+    }).catch(e => {
+      alert("播放失败，请再次点击页面以允许播放。");
+    });
+  } else {
+    audio.pause();
+    isMusicPlaying = false;
+    if (btn) btn.textContent = '▶️ 播放';
+  }
+}
+
+function changeVolume() {
+  const audio = document.getElementById('bg-music');
+  const slider = document.getElementById('volume-slider');
+  if (audio && slider) {
+    audio.volume = slider.value;
+  }
+}
+
+// 突破浏览器限制：用户第一次点击页面时自动尝试播放
+document.addEventListener('click', function tryAutoPlay() {
+  const audio = document.getElementById('bg-music');
+  if (audio && audio.paused && !isMusicPlaying) {
+    audio.volume = 0.3; // 默认音量 30%
+    audio.play().then(() => {
+      isMusicPlaying = true;
+      const btn = document.getElementById('play-btn');
+      if (btn) btn.textContent = '⏸️ 暂停';
+    }).catch(e => {
+      console.log("自动播放被浏览器拦截，等待用户手动点击播放。");
+    });
+  }
+  // 无论是成功还是被拦截，第一次点击后就不必再强行触发了
+  document.removeEventListener('click', tryAutoPlay);
+}, { once: true }); // once: true 确保只执行一次
+
 init();
