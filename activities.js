@@ -30,7 +30,7 @@ async function createActivity() {
   document.getElementById('act-reward').value = '';
   document.getElementById('act-desc').value = '';
   alert('活动发布成功！');
-  init(); // 重新加载页面数据
+  init();
 }
 
 // 加载所有活动
@@ -44,6 +44,11 @@ async function loadActivities() {
     return;
   }
 
+  // 获取用户映射表（用于显示发布人）
+  const { data: profiles } = await siteApp.from('profiles').select('id, username');
+  const profileMap = {}; (profiles || []).forEach(p => profileMap[p.id] = p.username);
+
+  // 获取当前用户的申请记录
   let myAppMap = {};
   if (currentUser) {
     const { data: myApps } = await siteApp.from('activity_applications').select('activity_id, status').eq('applicant_id', currentUser.id);
@@ -56,17 +61,20 @@ async function loadActivities() {
     
     if (!status) btnHtml = `<button class="btn-submit" style="width:auto; padding:6px 20px; font-size:14px;" onclick="applyActivity('${a.id}')">申请参加</button>`;
     else if (status === 'pending') btnHtml = `<span style="color:#f59e0b; font-weight:bold;">⏳ 审核中</span>`;
-    else if (status === 'approved') btnHtml = `<span style="color:#10b981; font-weight:bold;">✅ 已通过（获得 ${a.reward}）</span>`;
+    else if (status === 'approved') btnHtml = `<span style="color:#10b981; font-weight:bold;">✅ 已通过（金额：${a.reward}）</span>`;
     else if (status === 'rejected') btnHtml = `<span style="color:#ef4444; font-weight:bold;">❌ 已拒绝</span>`;
 
-    // 发布者或管理员可以删除活动
+    // 判断是否可以删除（发布者本人 或 管理员）
     const canDelete = currentUser.id === a.creator_id || currentUserRole === 'admin';
     const deleteBtn = canDelete ? `<button class="admin-delete-btn" style="color:#ef4444; background:none; border:none; cursor:pointer;" onclick="deleteActivity('${a.id}')">🗑️ 删除</button>` : '';
 
     return `
     <div class="activity-card" style="position:relative;">
       <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-        <h3>${a.title}</h3>
+        <div>
+          <h3>${a.title}</h3>
+          <div style="font-size:13px; color:#8590a6; margin-top:4px;">发布人：${profileMap[a.creator_id] || '未知'}</div>
+        </div>
         ${deleteBtn}
       </div>
       <div class="activity-reward">💰 金额：${a.reward}</div>
@@ -115,12 +123,11 @@ async function loadMyApplications() {
     </div>`).join('');
 }
 
-// 加载“待我审核的申请”（仅限我是发布者或管理员）
+// 加载“待我审核的申请”（发布者或管理员可见）
 async function loadCreatorPendingApps() {
   const section = document.getElementById('creator-pending-section');
   const list = document.getElementById('creator-pending-list');
 
-  // 1. 获取当前用户发布的活动ID
   const { data: myActivities } = await siteApp.from('activities').select('id').eq('creator_id', currentUser.id);
   const myActIds = (myActivities || []).map(a => a.id);
 
@@ -129,7 +136,6 @@ async function loadCreatorPendingApps() {
     return;
   }
 
-  // 2. 查询这些活动下的待审核申请（如果是管理员，查全部；如果是发布者，只查自己的）
   let query = siteApp.from('activity_applications').select('*, activities(title, reward)').eq('status', 'pending').order('created_at', { ascending: false });
   if (currentUserRole !== 'admin') {
     query = query.in('activity_id', myActIds);
@@ -139,13 +145,16 @@ async function loadCreatorPendingApps() {
   const { data: profiles } = await siteApp.from('profiles').select('id, username');
   const profileMap = {}; (profiles || []).forEach(p => profileMap[p.id] = p.username);
 
-  if (!apps || apps.length === 0) {
+  // ⚠️ 关键过滤：不能审核自己的申请
+  const pendingApps = (apps || []).filter(a => a.applicant_id !== currentUser.id);
+
+  if (pendingApps.length === 0) {
     section.style.display = 'none';
     return;
   }
 
   section.style.display = 'block';
-  list.innerHTML = apps.map(a => `
+  list.innerHTML = pendingApps.map(a => `
     <div class="post-card" style="border-left: 4px solid #f59e0b; margin-bottom:12px;">
       <div><b>申请人：</b>${profileMap[a.applicant_id] || '未知'}</div>
       <div><b>活动：</b>${a.activities?.title} （金额：${a.activities?.reward}）</div>
@@ -157,7 +166,7 @@ async function loadCreatorPendingApps() {
     </div>`).join('');
 }
 
-// 加载“历史记录”（仅限我是发布者或管理员）
+// 加载“历史记录”（已处理的申请）
 async function loadCreatorHistory() {
   const section = document.getElementById('history-section');
   const list = document.getElementById('history-list');
