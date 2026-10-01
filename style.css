@@ -249,3 +249,38 @@ body {
 }
 #my-requests, #pending-reviews { margin-top: 32px; }
 
+/* ================= 音乐播放器样式 ================= */
+.music-player {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+.music-btn {
+  background: rgba(0, 132, 255, 0.15);
+  border: 1px solid rgba(0, 132, 255, 0.3);
+  color: #38bdf8;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: 0.2s;
+}
+.music-btn:hover {
+  background: rgba(0, 132, 255, 0.3);
+  color: #fff;
+}
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #94a3b8;
+}
+.volume-control input[type="range"] {
+  flex: 1;
+  accent-color: #0084ff;
+  cursor: pointer;
+}
+
