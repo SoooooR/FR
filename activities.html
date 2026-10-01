@@ -1,57 +1,21 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>家庭网站 - 活动中心</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <nav class="navbar">
-    <a href="index.html" class="logo">🏠 家庭网站</a>
-    <div class="nav-links">
-      <a href="index.html">首页</a>
-      <a href="activities.html" class="active">活动中心</a>
-      <a href="fund.html">资金审批</a>
-      <a href="resources.html">资源分享</a>
-    </div>
-    <div class="user-actions">
-      欢迎，<span id="current-user">加载中...</span>
-      <a href="javascript:void(0)" onclick="changePassword()">改密</a>
-      <a href="javascript:void(0)" onclick="logout()">退出</a>
-    </div>
-  </nav>
-
   <div class="container">
-        <!-- 所有人可见：发布活动表单 -->
-    <div class="form-card" id="create-activity-card">
-      <h2>📢 发布新活动</h2>
-      <div class="form-group"><label>活动名称</label><input type="text" id="act-title" placeholder="例如：成长计划"></div>
-      <div class="form-group"><label>活动金额</label><input type="text" id="act-reward" placeholder="例如：1000元"></div>
-      <div class="form-group"><label>活动详情</label><textarea id="act-desc" placeholder="描述活动内容、规则..."></textarea></div>
-      <button class="btn-submit" onclick="createActivity()">发布活动</button>
-    </div>
-
-      <div class="container">
     
     <!-- 第一部分：进行中的活动（最上面） -->
     <h2 style="margin-bottom:15px; font-size:18px; color:#fff;">🎯 进行中的活动</h2>
     <div id="activities-list"></div>
 
     <!-- 第二部分：待审核和已申请的（中间） -->
-    <!-- 2.1 待我审核的申请（发布者或管理员可见） -->
     <div id="creator-pending-section" style="display:none; margin-top: 32px;">
       <h2 style="margin-bottom:15px; font-size:18px; color:#fff;">📋 待我审核的活动申请</h2>
       <div id="creator-pending-list"></div>
     </div>
     
-    <!-- 2.2 我的申请记录（所有人可见） -->
     <div id="my-applications-section" style="margin-top: 32px;">
       <h2 style="margin-bottom:15px; font-size:18px; color:#fff;">📝 我的申请记录</h2>
       <div id="my-applications-list"></div>
     </div>
 
-    <!-- 第三部分：发布框（放在下面） -->
+    <!-- 第三部分：发布框（放在下面，只保留这一个！） -->
     <div class="form-card" id="create-activity-card" style="margin-top: 32px;">
       <h2>📢 发布新活动</h2>
       <div class="form-group"><label>活动名称</label><input type="text" id="act-title" placeholder="例如：成长计划"></div>
@@ -67,9 +31,3 @@
     </div>
 
   </div>
-
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
-  <script src="activities.js"></script>
-</body>
-</html>
