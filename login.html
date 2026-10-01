@@ -12,7 +12,7 @@
     <h2>登录</h2>
     <input type="email" id="login-email" placeholder="邮箱" onkeydown="if(event.key === 'Enter') login()">
     <input type="password" id="login-password" placeholder="密码" onkeydown="if(event.key === 'Enter') login()">
-    <button onclick="login()">登录</button>
+    <button id="login-btn" onclick="login()">登录</button>
     <p>没有账号？<a href="javascript:void(0)" onclick="showRegister()">注册</a></p>
   </div>
 
@@ -65,14 +65,24 @@
       alert('注册成功！请直接登录。');
     }
 
-    async function login() {
+        async function login() {
+      const btn = document.getElementById('login-btn');
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = '登录中...'; // 让用户知道在登录
+
       const email = document.getElementById('login-email').value;
       const password = document.getElementById('login-password').value;
 
       const { data, error } = await authApp.auth.signInWithPassword({ email, password });
-      if (error) { alert('登录失败：' + error.message); return; }
+      
+      if (error) { 
+        alert('登录失败：' + error.message); 
+        btn.disabled = false;
+        btn.textContent = originalText;
+        return; 
+      }
 
-      // 登录成功后，检查资料是否存在，没有就补上
       if (data.user) {
         await ensureProfile(data.user.id, null);
       }
